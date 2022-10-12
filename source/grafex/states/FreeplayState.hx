@@ -77,8 +77,32 @@ class FreeplayState extends MusicBeatState
 
 	var camZoom:FlxTween;
 
+	// var storySongs:Array<SongMetadata> = [
+	// 	['Blu', 0, 'barren', 0xff1625ff],
+	// 	['Anillo', 0, 'lenzo', 0xfffbff16],
+	// 	['Remorseless', 0, 'morrow', 0xff555555],
+	// 	['Overdrive', 0, 'cbarren', 0xffcc0f0f],
+	// 	['Amber', 0, 'lenzai', 0xffffcc00]
+	// ];
+
 	override function create()
 	{
+		switch (PackSelectState.freeplayCats[PackSelectState.curCategory].toLowerCase()) //3.0 cool shit
+		{
+			case 'story':
+				addWeek(['Blu'], 0xff1625ff, ['barren']);
+				addWeek(['Anillo'], 0xfffbff16, ['lenzo']);
+				addWeek(['Remorseless'], 0xff555555, ['morrow']);
+				addWeek(['Overdrive'], 0xffcc0f0f, ['cbarren']);
+				addWeek(['Amber'], 0xffffcc00, ['lenzai']);
+			case 'extras':
+				addWeek(['Harmony'], 0xff0066ff, ['dave']);
+				addWeek(["Rockin"], 0xff00c11a, ['bambi']);
+				addWeek(['Empowered'], 0xff2f9eff, ['bf']);
+			case 'joke':
+				addWeek(['get real'], 0xff0066ff, ['dave-3d-blue']);
+		}
+
 		GrfxLogger.log('info', 'Switched state to: ' + Type.getClassName(Type.getClass(this)));
 		
 		Paths.clearStoredMemory();
@@ -127,7 +151,7 @@ class FreeplayState extends MusicBeatState
 				{
 					colors = [146, 113, 253];
 				}
-				addSong(song[0], i, song[1], FlxColor.fromRGB(colors[0], colors[1], colors[2]));
+				//addSong(song[0], i, song[1], FlxColor.fromRGB(colors[0], colors[1], colors[2]));
 			}
 		}
 		WeekData.loadTheFirstEnabledMod();
@@ -240,6 +264,21 @@ class FreeplayState extends MusicBeatState
 	public function addSong(songName:String, weekNum:Int, songCharacter:String, color:Int)
 	{
 		songs.push(new SongMetadata(songName, weekNum, songCharacter, color));
+	}
+
+	public function addWeek(songs:Array<String>, weekColor:Int, ?songCharacters:Array<String>)
+	{
+		if (songCharacters == null)
+			songCharacters = ['bf'];
+
+		var num:Int = 0;
+		for (song in songs)
+		{
+			addSong(song, 0, songCharacters[num], weekColor);
+
+			if (songCharacters.length != 1)
+				num++;
+		}
 	}
 
 	function weekIsLocked(name:String):Bool {
@@ -359,7 +398,7 @@ class FreeplayState extends MusicBeatState
 			        	colorTween.cancel();
 			        }
 			        FlxG.sound.play(Paths.sound('cancelMenu'));
-			        MusicBeatState.switchState(new MainMenuState());
+			        MusicBeatState.switchState(new PackSelectState());
 			    });
 		    }
 		}
@@ -380,7 +419,7 @@ class FreeplayState extends MusicBeatState
 				FlxG.sound.music.volume = 0;
 				Paths.currentModDirectory = songs[curSelected].folder;
 				var poop:String = Highscore.formatSong(songs[curSelected].songName.toLowerCase(), curDifficulty);
-				PlayState.SONG = Song.loadFromJson(poop, songs[curSelected].songName.toLowerCase());
+				PlayState.SONG = Song.loadFromJson(songs[curSelected].songName.toLowerCase(), 'charts');
 
 				var listenin:String = 'Freeplay - Listening: ' + songs[curSelected].songName + '';
 
@@ -437,7 +476,7 @@ class FreeplayState extends MusicBeatState
 		    ChooseSound.looped = false;
     
 		    //Utils.checkExistingChart(songLowercase, poop);
-		    PlayState.SONG = Song.loadFromJson(songString, songLowercase);
+		    PlayState.SONG = Song.loadFromJson(songLowercase, 'charts');
 		    PlayState.isStoryMode = false;
 		    PlayState.storyDifficulty = curDifficulty;
 			

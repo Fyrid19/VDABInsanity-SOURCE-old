@@ -43,11 +43,18 @@ class DiscordClient
 	    
 	    static function onReady()
 	    {
-	    	DiscordRpc.presence({
+	    	/*DiscordRpc.presence({
 	    		details: "The Menu",
 	    		state: null,
 	    		largeImageKey: 'discordlogo',
-	    		largeImageText: "Grafex Engine"
+	    		largeImageText: "MG Engine"
+	    	});*/
+
+			DiscordRpc.presence({
+	    		details: "no leak",
+	    		state: null,
+	    		largeImageKey: 'discordlogo',
+	    		largeImageText: "MG Engine"
 	    	});
 	    }
     
@@ -80,11 +87,23 @@ class DiscordClient
 	    		endTimestamp = startTimestamp + endTimestamp;
 	    	}
     
-	    	DiscordRpc.presence({
+	    	/*DiscordRpc.presence({
 	    		details: details,
 	    		state: state,
 	    		largeImageKey: 'discordlogo',
-	    		largeImageText: "Grafex v " + grafex.data.EngineData.grafexEngineVersion,
+	    		largeImageText: "MG v " + grafex.data.EngineData.grafexEngineVersion,
+	    		smallImageKey : smallImageKey,
+                smallImageText : smallImageText,
+	    		// Obtained times are in milliseconds so they are divided so Discord can use it
+	    		startTimestamp : Std.int(startTimestamp / 1000),
+                endTimestamp : Std.int(endTimestamp / 1000)
+	    	});*/
+
+			DiscordRpc.presence({
+	    		details: 'no leak',
+	    		state: null,
+	    		largeImageKey: 'discordlogo',
+	    		largeImageText: "MG v " + grafex.data.EngineData.grafexEngineVersion,
 	    		smallImageKey : smallImageKey,
                 smallImageText : smallImageText,
 	    		// Obtained times are in milliseconds so they are divided so Discord can use it

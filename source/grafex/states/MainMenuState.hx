@@ -41,8 +41,37 @@ class MainMenuState extends MusicBeatState
 
 	private var camGame:FlxCamera;
 	private var camAchievement:FlxCamera;
+
+	public static var bgPaths:Array<String> = //thats a lot of backgrounds
+	[
+		'backgrounds/SwagnotrllyTheMod',
+		'backgrounds/morie',
+		'backgrounds/mantis',
+		'backgrounds/mamakotomi',
+		'backgrounds/Aadsta',
+		'backgrounds/ArtiztGmer',
+		'backgrounds/DeltaKastel',
+		'backgrounds/DeltaKastel2',
+		'backgrounds/DeltaKastel3',
+		'backgrounds/DeltaKastel4',
+		'backgrounds/DeltaKastel5',
+		'backgrounds/diamond man',
+		'backgrounds/Jukebox',
+		'backgrounds/kiazu',
+		'backgrounds/Lancey',
+		'backgrounds/mepperpint',
+		'backgrounds/neon',
+		'backgrounds/Onuko',
+		'backgrounds/ps',
+		'backgrounds/ramzgaming',
+		'backgrounds/ricee_png',
+		'backgrounds/sk0rbias',
+		'backgrounds/zombought'
+	];
 	
 	var menuItems:FlxTypedGroup<FlxSprite>;
+	var menuIcon:FlxSprite;
+	var menuIconDesc:FlxText;
 	public var movingBG:FlxBackdrop;
 	public var menuBox:FlxSprite;
 
@@ -52,10 +81,21 @@ class MainMenuState extends MusicBeatState
 	var optionShit:Array<String> = [
 		'story_mode',
 		'freeplay',
-        #if MODS_ALLOWED 'mods', #end
+        //#if MODS_ALLOWED 'mods', #end
 		'credits',
 		//#if !switch 'donate', #end // you can uncomment this if you want - Xale
-		'options'
+		'options',
+		'discord'
+	];
+
+	var menuDescs:Array<String> = [
+		'Play story mode and unlock new things!', //story mode
+		'Play any song as you wish!', //freeplay
+		'Look at the people who have worked for or contributed to the mod!', //credits
+		//'Listen to songs of the mod.', //ost
+		'Adjust game settings and keybinds.', //options
+		'Join the official discord server!', //discord
+		//'Connect your GameJolt account and more!' //extras
 	];
 
 	var camFollow:FlxObject;
@@ -121,9 +161,9 @@ class MainMenuState extends MusicBeatState
 		add(camFollow);
 		add(camFollowPos);
 
-		movingBG = new FlxBackdrop(Paths.image('menuDesat'), 10, 0, true, true);
+		movingBG = new FlxBackdrop(randomizeBG(), 10, 0, true, true);
 		movingBG.scrollFactor.set(0,0);
-		movingBG.color = 0xfffde871;
+		movingBG.color = 0xff6a6a6a;
         movingBG.velocity.x = -90;
 		add(movingBG);
 
@@ -138,6 +178,19 @@ class MainMenuState extends MusicBeatState
 
 		menuItems = new FlxTypedGroup<FlxSprite>();
 		add(menuItems);
+
+		menuIcon = new FlxSprite(-80).loadGraphic(Paths.image('mainmenu/menuicons/' + optionShit[curSelected].toLowerCase()));
+        menuIcon.scrollFactor.set(0, 0);
+		menuIcon.updateHitbox();
+		menuIcon.x = FlxG.width - 500;
+		menuIcon.y = FlxG.height - 500;
+        add(menuIcon);
+
+		menuIconDesc = new FlxText(menuIcon.x, menuIcon.y + 350, 600, "", 25);
+		menuIconDesc.scrollFactor.set();
+		menuIconDesc.borderSize = 2;
+		menuIconDesc.setFormat(Paths.font("comic.ttf"), 25, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		add(menuIconDesc);
 
         boxMain = new FlxSprite(-25, 495);
 		boxMain.frames = Paths.getSparrowAtlas('mainmenu/boxMain');
@@ -183,11 +236,11 @@ class MainMenuState extends MusicBeatState
 		
 		var versionShit:FlxText = new FlxText(12, FlxG.height - 44, 0, "Grafex Engine v" + EngineData.grafexEngineVersion #if debug + " Debug" #end, 12);
 		versionShit.scrollFactor.set();
-		versionShit.setFormat("VCR OSD Mono", 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		versionShit.setFormat(Paths.font("comic.ttf"), 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		add(versionShit);
 		var versionShit:FlxText = new FlxText(12, FlxG.height - 24, 0, "Friday Night Funkin' v0.2.8", 12);
 		versionShit.scrollFactor.set();
-		versionShit.setFormat("VCR OSD Mono", 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		versionShit.setFormat(Paths.font("comic.ttf"), 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		add(versionShit);
 
 		changeItem();
@@ -208,6 +261,8 @@ class MainMenuState extends MusicBeatState
 
 		var lerpVal:Float = Utils.boundTo(elapsed * 9, 0, 1);
 
+		menuIconDesc.text = menuDescs[curSelected];
+
         if(FlxG.keys.justPressed.F11)
     		FlxG.fullscreen = !FlxG.fullscreen;
 		if(selectedSomethin)
@@ -216,6 +271,10 @@ class MainMenuState extends MusicBeatState
 					FlxG.mouse.visible = false;
                     movingBG.velocity.x -= (40 / ClientPrefs.framerate * 60);
 				});
+		if(FlxG.keys.justPressed.NUMPADPERIOD) {
+			FlxG.mouse.visible = true;
+			MusicBeatState.switchState(new Terminal());
+		}
 
 		camFollowPos.setPosition(FlxMath.lerp(camFollowPos.x, camFollow.x, lerpVal), FlxMath.lerp(camFollowPos.y, camFollow.y, lerpVal));
 
@@ -269,8 +328,8 @@ class MainMenuState extends MusicBeatState
         {
             if (spr.ID == curSelected)
             {
-                var scaledX = FlxMath.remapToRange((spr.ID * 30) + 40, 0,1,0,1.3);
-                var xPosition:Float = (scaledX * 1.5) + (FlxG.height * 0.48);
+                var scaledX = FlxMath.remapToRange((spr.ID * 30) + 25, 0,1,0,1.3);
+                var xPosition:Float = (scaledX * 1.2) + (FlxG.height * 0.48);
                 spr.x = FlxMath.lerp(spr.x, (xPosition * Math.cos(0.7)), elapsedTime);
                 FlxTween.tween(spr.scale, {x: 0.8, y: 0.8}, 0.1, {
 						startDelay: 0.1,
@@ -287,7 +346,12 @@ class MainMenuState extends MusicBeatState
 				});
             }
         });
+	}
 
+	public static function randomizeBG():flixel.system.FlxAssets.FlxGraphicAsset
+	{
+		var chance:Int = FlxG.random.int(0, bgPaths.length - 1);
+		return Paths.image(bgPaths[chance]);
 	}
 
 	override function stepHit()
@@ -315,6 +379,8 @@ class MainMenuState extends MusicBeatState
 				curSelected = menuItems.length - 1;
 		}
 
+		menuIcon.loadGraphic(Paths.image('mainmenu/menuicons/' + optionShit[curSelected].toLowerCase()));
+
 		menuItems.forEach(function(spr:FlxSprite)
 			{
 				if (spr.ID == curSelected && finishedFunnyMove)
@@ -333,27 +399,32 @@ class MainMenuState extends MusicBeatState
 
 	function bgClick()
 		{
-			if(clickCount > 1)
+			if(clickCount > 3)
 				clickCount = 0;
 			
 			switch(clickCount)
 			{
 				case 0:
-					colorEntry = 0xFF8971f9;
+					colorEntry = 0xff0044ff;
 				case 1:
-					colorEntry = 0xFFdf7098;
+					colorEntry = 0xfffffb00;
+				case 2:
+					colorEntry = 0xffb82aff;
+				case 3:
+					colorEntry = 0xffffffff;
 			}
 
-			FlxTween.color(movingBG, 0.7, colorEntry, 0xfffde871, {ease: FlxEase.quadOut});
+			FlxTween.color(movingBG, 0.7, colorEntry, 0xff6a6a6a, {ease: FlxEase.quadOut});
 			clickCount++;	
 		}
 
 
         function select()
 		{
-                if (optionShit[curSelected] == 'donate')
-				{
+                if (optionShit[curSelected] == 'donate') {
 					Utils.browserLoad('https://ninja-muffin24.itch.io/funkin');
+				} else if (optionShit[curSelected] == 'discord') {
+					Utils.browserLoad('https://discord.gg/uhT9pJ5Xd8'); // cool discord server
 				}
 				else
 				{
@@ -393,7 +464,7 @@ class MainMenuState extends MusicBeatState
 									case 'story_mode':
 										MusicBeatState.switchState(new StoryMenuState());
 									case 'freeplay':
-										MusicBeatState.switchState(new FreeplayState());
+										MusicBeatState.switchState(new PackSelectState());
 									#if MODS_ALLOWED
 									case 'mods':
 										MusicBeatState.switchState(new ModsMenuState());

@@ -75,7 +75,7 @@ class StoryMenuState extends MusicBeatState
 		GrfxLogger.log('info', 'Switched state to: ' + Type.getClassName(Type.getClass(this)));
 		
 		//TODO: add stateSwitching log (via Type.getClass)
-		Application.current.window.title = Main.appTitle + ' - Storymode Menu';
+		Application.current.window.title = Main.appTitle + ' - Story Select';
 
 		PlayState.isStoryMode = true;
 		WeekData.reloadWeekFiles(true);
@@ -271,12 +271,7 @@ class StoryMenuState extends MusicBeatState
 					changeDifficulty();
 				}
 
-			if(FlxG.keys.justPressed.CONTROL)
-			{
-				persistentUpdate = false;
-				openSubState(new GameplayChangersSubstate());
-			}
-			else if(controls.RESET)
+			if(controls.RESET)
 			{
 				persistentUpdate = false;
 				openSubState(new ResetScoreSubState('', curDifficulty, '', curWeek));

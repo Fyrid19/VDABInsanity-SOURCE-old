@@ -1,0 +1,14 @@
+{
+	"name": ["Story"],
+	"songs": [
+		["Blu", "barren", [165, 0, 77]],
+		["Anillo", "lenzo", [165, 0, 77]],
+		["Remorseless", "morrow", [165, 0, 77]],
+		["Overdrive", "cbarren", [165, 0, 77]],
+		["Amber", "lenzai", [165, 0, 77]]
+	],
+	"iconImage": "no-icon",
+	"packSelectColor": [165, 0, 77],
+	"freeplayColor": [165, 0, 77],
+	"hidden": false
+}

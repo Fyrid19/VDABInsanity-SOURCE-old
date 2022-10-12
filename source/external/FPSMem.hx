@@ -47,7 +47,7 @@ class FPSMem extends TextField
 		currentFPS = 0;
 		selectable = false;
 		mouseEnabled = false;
-                defaultTextFormat = new TextFormat(openfl.utils.Assets.getFont("assets/fonts/vcr.ttf").fontName, 14, color);
+        defaultTextFormat = new TextFormat(openfl.utils.Assets.getFont("assets/fonts/comic.ttf").fontName, 14, color);
 		width = 1280;
 		height = 720;
 
@@ -94,7 +94,7 @@ class FPSMem extends TextField
 				}*/
 				currentMem < 0 ? text += "Memory: Leaking " + Math.abs(currentMem) + " MB\n" : text += "Memory: " + currentMem + " MB\n";
 			}
-		text += "Grafex Engine v. " + EngineData.grafexEngineVersion + "\n" ;
+		text += "MG Engine v. " + EngineData.grafexEngineVersion + "\n" ;
 		}
 
 		cacheCount = currentCount;

@@ -156,9 +156,16 @@ class Note extends FlxSprite
 						missHealth = 0.3;
 					}
 					hitCausesMiss = true;
+				case 'Drive Note':
+					ignoreNote = mustPress;
+					reloadNote('DRIVE','','', true);
+                    multSpeed = 0.8;
+					noteSplashTexture = 'HURTnoteSplashes';
+					lowPriority = true;
+					hitCausesMiss = true;
 				case 'No Animation':
 					noAnimation = true;
-                                        noMissAnimation = true;
+                    noMissAnimation = true;
 				case 'GF Sing':
 					gfNote = true;
 			}

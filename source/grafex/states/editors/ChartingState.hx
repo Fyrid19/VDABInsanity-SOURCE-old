@@ -87,7 +87,8 @@ class ChartingState extends MusicBeatState
 		'Hey!',
 		'Hurt Note',
 		'GF Sing',
-		'No Animation'
+		'No Animation',
+		'Drive Note'
 	];
 	private var noteTypeIntMap:Map<Int, String> = new Map<Int, String>();
 	private var noteTypeMap:Map<String, Null<Int>> = new Map<String, Null<Int>>();
@@ -470,7 +471,7 @@ class ChartingState extends MusicBeatState
 		var loadEventJson:FlxButton = new FlxButton(loadAutosaveBtn.x, loadAutosaveBtn.y + 30, 'Load Events', function()
 		{
 			var songName:String = Paths.formatToSongPath(_song.song);
-			var file:String = Paths.json(songName + '/events');
+			var file:String = Paths.json('events/' + songName + '/events');
 			#if sys
 			if (#if MODS_ALLOWED FileSystem.exists(Paths.modsJson(songName + '/events')) || #end FileSystem.exists(file))
 			#else
@@ -478,7 +479,7 @@ class ChartingState extends MusicBeatState
 			#end
 			{
 				clearEvents();
-				var events:SwagSong = Song.loadFromJson('events', songName);
+				var events:SwagSong = Song.loadFromJson('events', 'events/' + songName);
 				_song.events = events.events;
 				changeSection(curSec);
 			}
@@ -3015,12 +3016,12 @@ if(!blockInput){
 			//make it look sexier if possible
 			if (Utils.difficulties[PlayState.storyDifficulty] != Utils.defaultDifficulty) {
 		      if(Utils.difficulties[PlayState.storyDifficulty] == null){
-				PlayState.SONG = Song.loadFromJson(song.toLowerCase(), song.toLowerCase());
+				PlayState.SONG = Song.loadFromJson(song.toLowerCase(), 'charts');
 			}else{
-				PlayState.SONG = Song.loadFromJson(song.toLowerCase() + "-" + Utils.difficulties[PlayState.storyDifficulty], song.toLowerCase());
+				PlayState.SONG = Song.loadFromJson(song.toLowerCase(), 'charts');
 			}
 			}else{
-			PlayState.SONG = Song.loadFromJson(song.toLowerCase(), song.toLowerCase());
+			PlayState.SONG = Song.loadFromJson(song.toLowerCase(), 'charts');
 			}
 			MusicBeatState.resetState();
 		}
@@ -3060,7 +3061,7 @@ if(!blockInput){
 			_file.addEventListener(Event.COMPLETE, onSaveComplete);
 			_file.addEventListener(Event.CANCEL, onSaveCancel);
 			_file.addEventListener(IOErrorEvent.IO_ERROR, onSaveError);
-			_file.save(data.trim(), Paths.formatToSongPath(_song.song) + (Utils.getDifficultyFilePath() == null ? Utils.getDifficultyFilePath() : '') + ".json");
+			_file.save(data.trim(), Paths.formatToSongPath(_song.song) + /*(Utils.getDifficultyFilePath() == null ? Utils.getDifficultyFilePath() : '') +*/ ".json");
 		}
 	}
 	
@@ -3098,7 +3099,7 @@ if(!blockInput){
 		_file.removeEventListener(IOErrorEvent.IO_ERROR, onSaveError);
 		_file = null;
 		FlxG.log.notice("Successfully saved LEVEL DATA.");
-		GrfxLogger.log('info', "Successfully saved LEVEL DATA in " + Paths.formatToSongPath(_song.song) + (Utils.getDifficultyFilePath() == null ? Utils.getDifficultyFilePath() : '') + ".json");
+		GrfxLogger.log('info', "Successfully saved LEVEL DATA in " + Paths.formatToSongPath(_song.song) + /*(Utils.getDifficultyFilePath() == null ? Utils.getDifficultyFilePath() : '') +*/ ".json");
 	}
 
 	/**
