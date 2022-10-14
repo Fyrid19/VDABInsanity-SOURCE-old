@@ -42,9 +42,9 @@ class Command
 	}
 }
 
-class Terminal extends MusicBeatState
+class Terminal extends MusicBeatState //BROKEN ATM..
 {
-    var username = PlatformUtil.getUsername();
+    var username:String = PlatformUtil.getUsername();
     var baseText:String = '\nPS C: gameDirectory/bin>';
     var baseText2:String = "Morrow's Insanity (Terminal State) \nCopyright (C) MG Engine. All Rights Reserved";
     var terminalInputText:FlxText;
@@ -62,7 +62,7 @@ class Terminal extends MusicBeatState
     {
         //PlatformUtil.sendWindowsNotification('Morrow.dat', "You're gonna regret coming here...", 0);
         //PlatformUtil.sendFakeMsgBox('testin', 0);
-        PlatformUtil.sendFakeMsgBox('hi ' + username, 0);
+        //PlatformUtil.sendFakeMsgBox('hi ' + username, 0);
 
         FlxG.sound.music.stop();
 

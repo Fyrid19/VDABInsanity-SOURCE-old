@@ -245,6 +245,8 @@ class PlayState extends MusicBeatState
 	public var bads:Int = 0;
 	public var shits:Int = 0;
     public var healthThing:FlxText;
+
+	private var shakeCam:Bool = false;
 	
 	private var generatedMusic:Bool = false;
 	public var endingSong:Bool = false;
@@ -390,6 +392,58 @@ class PlayState extends MusicBeatState
 	var precacheList:Map<String, String> = new Map<String, String>();
 
 	var maxHealthProb:Float;
+
+	/// floats & rotate
+	// a combination of one float x and one float y will make the character float in a circle
+	public static var funnyFloatY:Array<String> = [ // floating in my style
+		'morrow',
+		'barren',
+		'lenzo',
+		'corruptb'
+	];
+
+	public static var funnyFloatX:Array<String> = [ // floating side to side
+		'morrow',
+		'barren',
+		'lenzai',
+		'corruptb'
+	];
+
+	public static var funnyFloatXAlt:Array<String> = [ // a stronger float side to side
+		'shiftedBarren',
+		'bandu'
+	];
+
+	public static var funnyFloatYBase:Array<String> = [ // floating similar to base dave and bambi
+		'dave-3d',
+		'dave-3d-alt',
+		'bambi-3d',
+		'bambi-unfair',
+		'expunged',
+		'bandu',
+		'badai',
+		'bf-3d'
+	];
+
+	public static var funnyRotate:Array<String> = [ // similar to badai rotating in wireframe
+		'badai'
+	];
+
+	public static var funnyRotateAlt:Array<String> = [ // less power
+		'literally-nobody'
+	];
+
+	/// other things
+	public var stageColor:FlxColor = 0xffffffff;
+	public var hiddenGFSongs:Array<String> = [
+		'blu',
+		'anillo',
+		'remorseless',
+		'overdrive',
+		'amber',
+		'empowered',
+		'get-real'
+	];
 
 	override public function create()
 	{
@@ -2938,6 +2992,12 @@ class PlayState extends MusicBeatState
 			}
 		}
 
+		if (shakeCam && ClientPrefs.flashing)
+		{
+			// var shad = cast(FlxG.camera.screen.shader,Shaders.PulseShader);
+			FlxG.camera.shake(0.015, 0.015);
+		}
+
 		setOnLuas('curDecStep', curDecStep);
 		setOnLuas('curDecBeat', curDecBeat);
 
@@ -2967,137 +3027,75 @@ class PlayState extends MusicBeatState
 
 		callOnLuas('onUpdate', [elapsed]);
 
-		switch (curStage)
+		/*switch (curStage)
 		{
-			case 'tank':
-					moveTank(elapsed);
-        	case 'schoolEvil':
-				if(!ClientPrefs.lowQuality && bgGhouls.animation.curAnim.finished) {
-					bgGhouls.visible = false;
-				}
-                Application.current.window.title = randString(FlxG.random.int(8, 16));
-                songTxt.text = randString(FlxG.random.int(6, 14)); 
+			default: // setting the color stuff
+				dad.color = stageColor;
+				gf.color = stageColor;
+				boyfriend.color = stageColor;
+		}*/
 
-			case 'philly':
-				if (trainMoving)
-				{
-					trainFrameTiming += elapsed;
 
-					if (trainFrameTiming >= 1 / 24)
-					{
-						updateTrainPos();
-						trainFrameTiming = 0;
-					}
-				}
-				phillyWindow.alpha -= (Conductor.crochet / 1000) * FlxG.elapsed * 1.5;
+		// opponent float
+		if(funnyRotate.contains(dad.curCharacter.toLowerCase()))
+		{
+			dad.angle = Math.sin(elapsedtime) * 15;
+		}
+		if(funnyRotateAlt.contains(dad.curCharacter.toLowerCase()))
+		{
+			dad.angle = Math.sin(elapsedtime) * 8;
+		}
+		if(funnyFloatY.contains(dad.curCharacter.toLowerCase()))
+		{
+			dad.y += (Math.sin(elapsedtime) * 0.4);
+		}
+		if(funnyFloatYBase.contains(dad.curCharacter.toLowerCase()))
+		{
+			dad.y += (Math.sin(elapsedtime) * 0.6);
+		}
+		if(funnyFloatX.contains(dad.curCharacter.toLowerCase()))
+		{
+			dad.x += (Math.cos(elapsedtime) * 0.6);
+		}
+		if(funnyFloatXAlt.contains(dad.curCharacter.toLowerCase()))
+		{
+			dad.x += (Math.cos(elapsedtime) * 1.5);
+		}
 
-				if(phillyGlowParticles != null)
-				{
-					var i:Int = phillyGlowParticles.members.length-1;
-					while (i > 0)
-					{
-						var particle = phillyGlowParticles.members[i];
-						if(particle.alpha < 0)
-						{
-							particle.kill();
-							phillyGlowParticles.remove(particle, true);
-							particle.destroy();
-						}
-						--i;
-					}
-				}
-			case 'limo':
-				if(!ClientPrefs.lowQuality) {
-					grpLimoParticles.forEach(function(spr:BGSprite) {
-						if(spr.animation.curAnim.finished) {
-							spr.kill();
-							grpLimoParticles.remove(spr, true);
-							spr.destroy();
-						}
-					});
 
-					switch(limoKillingState) {
-						case 1:
-							limoMetalPole.x += 5000 * elapsed;
-							limoLight.x = limoMetalPole.x - 180;
-							limoCorpse.x = limoLight.x - 50;
-							limoCorpseTwo.x = limoLight.x + 35;
+		// bf float
+		if(funnyRotate.contains(boyfriend.curCharacter.toLowerCase()))
+		{
+			boyfriend.angle = Math.sin(elapsedtime) * 15;
+		}
+		if(funnyRotateAlt.contains(boyfriend.curCharacter.toLowerCase()))
+		{
+			boyfriend.angle = Math.sin(elapsedtime) * 8;
+		}
+		if(funnyFloatY.contains(boyfriend.curCharacter.toLowerCase()))
+		{
+			boyfriend.y += (Math.sin(elapsedtime) * 0.4);
+		}
+		if(funnyFloatYBase.contains(boyfriend.curCharacter.toLowerCase()))
+		{
+			boyfriend.y += (Math.sin(elapsedtime) * 0.6);
+		}
+		if(funnyFloatX.contains(boyfriend.curCharacter.toLowerCase()))
+		{
+			boyfriend.x += (Math.cos(elapsedtime) * 0.6);
+		}
+		if(funnyFloatXAlt.contains(boyfriend.curCharacter.toLowerCase()))
+		{
+			boyfriend.x += (Math.cos(elapsedtime) * 1.5);
+		}
 
-							var dancers:Array<BackgroundDancer> = grpLimoDancers.members;
-							for (i in 0...dancers.length) {
-								if(dancers[i].x < FlxG.width * 1.5 && limoLight.x > (370 * i) + 130) {
-									switch(i) {
-										case 0 | 3:
-											if(i == 0) FlxG.sound.play(Paths.sound('dancerdeath'), 0.5);
+		if (shakeCam)
+		{
+			gf.animation.play('scared', true);
+		}
 
-											var diffStr:String = i == 3 ? ' 2 ' : ' ';
-											var particle:BGSprite = new BGSprite('gore/noooooo', dancers[i].x + 200, dancers[i].y, 0.4, 0.4, ['hench leg spin' + diffStr + 'PINK'], false);
-											grpLimoParticles.add(particle);
-											var particle:BGSprite = new BGSprite('gore/noooooo', dancers[i].x + 160, dancers[i].y + 200, 0.4, 0.4, ['hench arm spin' + diffStr + 'PINK'], false);
-											grpLimoParticles.add(particle);
-											var particle:BGSprite = new BGSprite('gore/noooooo', dancers[i].x, dancers[i].y + 50, 0.4, 0.4, ['hench head spin' + diffStr + 'PINK'], false);
-											grpLimoParticles.add(particle);
-
-											var particle:BGSprite = new BGSprite('gore/stupidBlood', dancers[i].x - 110, dancers[i].y + 20, 0.4, 0.4, ['blood'], false);
-											particle.flipX = true;
-											particle.angle = -57.5;
-											grpLimoParticles.add(particle);
-										case 1:
-											limoCorpse.visible = true;
-										case 2:
-											limoCorpseTwo.visible = true;
-									} //Note: Nobody cares about the fifth dancer because he is mostly hidden offscreen :(
-									dancers[i].x += FlxG.width * 2;
-								}
-							}
-
-							if(limoMetalPole.x > FlxG.width * 2) {
-								resetLimoKill();
-								limoSpeed = 800;
-								limoKillingState = 2;
-							}
-
-						case 2:
-							limoSpeed -= 4000 * elapsed;
-							bgLimo.x -= limoSpeed * elapsed;
-							if(bgLimo.x > FlxG.width * 1.5) {
-								limoSpeed = 3000;
-								limoKillingState = 3;
-							}
-
-						case 3:
-							limoSpeed -= 2000 * elapsed;
-							if(limoSpeed < 1000) limoSpeed = 1000;
-
-							bgLimo.x -= limoSpeed * elapsed;
-							if(bgLimo.x < -275) {
-								limoKillingState = 4;
-								limoSpeed = 800;
-							}
-
-						case 4:
-							bgLimo.x = FlxMath.lerp(bgLimo.x, -150, Utils.boundTo(elapsed * 9, 0, 1));
-							if(Math.round(bgLimo.x) == -150) {
-								bgLimo.x = -150;
-								limoKillingState = 0;
-							}
-					}
-
-					if(limoKillingState > 2) {
-						var dancers:Array<BackgroundDancer> = grpLimoDancers.members;
-						for (i in 0...dancers.length) {
-							dancers[i].x = (370 * i) + bgLimo.x + 280;
-						}
-					}
-				}
-			case 'mall':
-				if(heyTimer > 0) {
-					heyTimer -= elapsed;
-					if(heyTimer <= 0) {
-						bottomBoppers.dance(true);
-						heyTimer = 0;
-					}
-				}
+		if(hiddenGFSongs.contains(SONG.song.toLowerCase())) {
+			gf.visible = false;
 		}
 
 		if(!inCutscene) {
@@ -5525,8 +5523,7 @@ class PlayState extends MusicBeatState
 		bfPos[0] = boyfriend.getMidpoint().x - 100 - boyfriend.cameraPosition[0] - boyfriendCameraOffset[0];
 		bfPos[1] = boyfriend.getMidpoint().y - 100 + boyfriend.cameraPosition[1] + boyfriendCameraOffset[1];
 
-
-        if (!stageData.hide_girlfriend) 
+        if (!stageData.hide_girlfriend)
 		{	
 		gfPos[0] = gf.getMidpoint().x + gf.cameraPosition[0] + girlfriendCameraOffset[0];
 		gfPos[1] = gf.getMidpoint().y + gf.cameraPosition[1] + girlfriendCameraOffset[1];
